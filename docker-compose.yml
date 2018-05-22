@@ -1,0 +1,36 @@
+version: '2'
+services:
+
+  django:
+    container_name: django-demo
+    build:
+      context: .
+    # networks:
+    #   - dsne-django-nginx
+    volumes:
+      - demo-static:/usr/src/app/static
+    ports:
+      - 8000:8000
+
+  nginx:
+    container_name: demo-nginx
+    build:
+      context: ./nginx
+      dockerfile: nginx.dockerfile
+    networks:
+      - dsne-django-nginx
+    volumes:
+      - dsne-django-static:/usr/src/app/static
+      - dsne-nginx-cert:/etc/ssl/certs:ro
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - django
+
+volumes:
+  demo-static:
+
+# networks:
+#   dsne-django-nginx:
+#     driver: bridge
